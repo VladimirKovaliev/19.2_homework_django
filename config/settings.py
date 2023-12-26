@@ -144,3 +144,4 @@ EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 
 EMAIL_HOST_USER = 'kovaliev.v@yandex.ru'
+EMAIL_HOST_PASSWORD = 'fwmbucispjqilbxb'
