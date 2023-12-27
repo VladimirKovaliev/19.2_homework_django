@@ -52,6 +52,7 @@ def verification(request, verify_code):
     except (AttributeError, ValidationError):
         return redirect('users:invalid_verify')
 
+
 def generate_new_password(request):
     new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
     send_mail(
@@ -65,23 +66,6 @@ def generate_new_password(request):
     return redirect(reverse('catalog:index'))
 
 
-class RegisterView(CreateView):
-    model = User
-    form_class = UserRegisterForm
-    success_url = reverse_lazy('users:login')
-    template_name = 'users/register.html'
-
-    def form_valid(self, form):
-        new_user = form.save()
-        send_mail(
-            subject='Поздравляем с регистрацией',
-            message='Вы зарегистрировались на нашей платформе, добро пожаловать!',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[new_user.email]
-        )
-        return super().form_valid(form)
-
-
 class ProfileView(UpdateView):
     model = User
     form_class = UserProfileForm
@@ -92,17 +76,17 @@ class ProfileView(UpdateView):
 
 
 def reset_password(request):
-    if request.method == 'POST': # если форма отправлена
-        email = request.POST.get('email') # получаем почту из формы
-        user = User.objects.get(email=email) # находим такого пользователя
-        new_password = get_random_string(12) # тут генерируем новый пароль
+    if request.method == 'POST':  # если форма отправлена
+        email = request.POST.get('email')  # получаем почту из формы
+        user = User.objects.get(email=email)  # находим такого пользователя
+        new_password = get_random_string(12)  # тут генерируем новый пароль
         send_mail(
             subject='Восстановление пароля',
             message=f'Для входа используйте новый пароль: {new_password}',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[user.email],
             fail_silently=False,
-        ) # отправлем новый пароль пользователю
+        )  # отправлем новый пароль пользователю
         user.set_password(new_password)
         user.save()
         return redirect('users:login')
