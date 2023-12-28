@@ -1,4 +1,4 @@
-from random import random
+import random
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
