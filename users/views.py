@@ -22,25 +22,50 @@ def logout_view(request):
 class RegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
-    template_name = 'users/register/html'
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('users:login')
 
     def form_valid(self, form):
-        self.object = form.save()
-        self.object.is_active = False
-        self.object.verify_code = get_random_string(12)
-        self.object.save()
-        url = f'http://127.0.0.1:8000/users/email/verify/{self.object.verify_code}'
+
+        new_user = form.save()
+        new_pass = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        new_user.code = new_pass
+        new_user.save()
         send_mail(
-            subject='Регистрация',
-            message=f'Для продолжения регистрации перейдите по ссылке: {url}',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list={self.object.email},
-            fail_silently=False,
+            recipient_list=[new_user.email],
+            message=f'Для подтверждения email введите код {new_user.code}',
+            subject='Регистрация на сервисе',
+            from_email=settings.DEFAULT_FROM_EMAIL,
         )
         return super().form_valid(form)
+        # self.object = form.save()
+        # self.object.email_verify = False
+        # code = ''.join([str(random.randint(0, 9)) for _ in range(12)])
+        # self.object.verify_code = code
+        # self.object.save()
+        # send_mail(
+        #     subject='Регистрация',
+        #     message=f'Для продолжения регистрации введите код: {self.object.verify_code}',
+        #     from_email=settings.EMAIL_HOST_USER,
+        #     recipient_list={self.object.email},
+        #     fail_silently=False,
+        # )
+        # return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse('users:verify')
+    # def form_valid(self, form):
+    #     new_pass = ''.join([str(random.randint(0, 9)) for in range(6)])
+    #     new_user = form.save(commit=False)
+    #     new_user.code = new_pass
+    #     new_user.save()
+    #     send_mail(
+    #         recipient_list=[new_user.email],
+    #         message=f'Для подтверждения email введите код {new_user.code}',
+    #         subject='Регистрация на сервисе',
+    #         from_email=settings.DEFAULT_FROM_EMAIL,
+    #     )
+
+    # def get_success_url(self):
+    #     return reverse('users:verify')
 
 
 def verification(request, verify_code):
