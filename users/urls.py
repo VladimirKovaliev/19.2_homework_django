@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 
 from users import views
 from users.apps import UsersConfig
-from users.views import RegisterView, ProfileView, reset_password, verification
+from users.views import RegisterView, ProfileView, reset_password, CodeView
 
 app_name = UsersConfig.name
 
@@ -16,7 +16,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(template_name='users/register.html'), name='register'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('email/reset_password/', reset_password, name='reset_password'),
-    path('email/verify/<str:verify_code>', verification, name='verify'),
+    path('code/', CodeView.as_view(), name='code'),
     path('success_verify/', TemplateView.as_view(template_name='users/success_verify.html'), name='success_verify'),
     path('invalid_verify/', TemplateView.as_view(template_name='users/invalid_verify.html'), name='invalid_verify'),
 ]

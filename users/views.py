@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.urls import reverse_lazy, reverse
 from django.utils.crypto import get_random_string
+from django.views import View
 from django.views.generic import CreateView, UpdateView
 from users.models import User
 from users.forms import UserRegisterForm, UserProfileForm, ResetForm
@@ -23,11 +24,10 @@ class RegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
     template_name = 'users/register.html'
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy('users:code')
 
     def form_valid(self, form):
-
-        new_user = form.save()
+        new_user = form.save(commit=False)
         new_pass = ''.join([str(random.randint(0, 9)) for _ in range(6)])
         new_user.code = new_pass
         new_user.save()
@@ -35,7 +35,7 @@ class RegisterView(CreateView):
             recipient_list=[new_user.email],
             message=f'Для подтверждения email введите код {new_user.code}',
             subject='Регистрация на сервисе',
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            from_email=settings.EMAIL_HOST_USER,
         )
         return super().form_valid(form)
         # self.object = form.save()
@@ -68,14 +68,32 @@ class RegisterView(CreateView):
     #     return reverse('users:verify')
 
 
-def verification(request, verify_code):
-    try:
-        user = User.objects.filter(verify_code=verify_code).first()
-        user.is_active = True
-        user.save()
-        return redirect('users:success_verify')
-    except (AttributeError, ValidationError):
-        return redirect('users:invalid_verify')
+#
+# def verification(request, verify_code):
+#     try:
+#         user = User.objects.filter(verify_code=verify_code).first()
+#         user.is_active = True
+#         user.save()
+#         return redirect('users:success_verify')
+#     except (AttributeError, ValidationError):
+#         return redirect('users:invalid_verify')
+
+class CodeView(View):
+    model = User
+    template_name = 'users/code.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        print(type(request))
+        code = request.POST.get('code')
+        user = User.objects.filter(code=code).first()
+
+        if user is not None and user.code == code:
+            user.is_active = True
+            user.save()
+            return redirect(reverse('users:login'))
 
 
 def generate_new_password(request):
