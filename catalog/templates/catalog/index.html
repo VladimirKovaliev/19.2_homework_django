@@ -7,22 +7,24 @@
 </div>
 <div class="row">
     {% for object in object_list %}
-    <div class="col-md-4">
-        <div class="card mb-4 box-shadow">
-            <img class="card-img-top"
-                 src="{% media_tag object.preview %}"
-                 alt="Card image cap">
-            <div class="card-body">
-                <p class="card-text">{{ object.name|title }}</p><br>
-                <a href="{% url 'catalog:view_product' object.pk %}" type="button"
-                   class="btn btn-primary form-control mb-2">View</a>
-                <a href="{% url 'catalog:update_product' object.pk %}" type="button"
-                   class="btn btn-primary form-control mb-2">Edit</a>
-                <a href="{% url 'catalog:delete_product' object.pk %}" type="button"
-                   class="btn btn-sm btn-outline-danger">Delete</a>
+        {% if object.publication == True %}
+            <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <img class="card-img-top"
+                         src="{% media_tag object.preview %}"
+                         alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">{{ object.name|title }}</p><br>
+                        <a href="{% url 'catalog:view_product' object.pk %}" type="button"
+                           class="btn btn-primary form-control mb-2">View</a>
+                        <a href="{% url 'catalog:update_product' object.pk %}" type="button"
+                           class="btn btn-primary form-control mb-2">Edit</a>
+                        <a href="{% url 'catalog:delete_product' object.pk %}" type="button"
+                           class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        {% endif %}
     {% endfor %}
 </div>
 {% endblock %}
