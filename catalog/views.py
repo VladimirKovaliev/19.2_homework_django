@@ -33,17 +33,22 @@ class ProductDetailView(DetailView):
 
 
 class ProductCreateView(CreateView):
-    # model = Product
-    # fields = ('category', 'name', 'description', 'preview', 'price')
-    # success_url = reverse_lazy('catalog:index')
-
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:index')
 
+    def get_context_data(self, **kwargs):
+        contex_data = super().get_context_data(**kwargs)
+        return contex_data
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.author = self.request.user
+        self.object.save()
+        return super().form_valid(form)
+
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
-
     login_url = 'users:login'
     model = Product
     form_class = ProductForm
