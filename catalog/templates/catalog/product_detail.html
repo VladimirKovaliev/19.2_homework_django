@@ -18,6 +18,9 @@
                 <p class="card-text">{{ object.description|truncatechars:100 }}</p>
                 <p class="card-text">{{ object.preview }}</p>
                 <p class="card-text">{{ object.price }} Руб</p>
+                {% if object.author != None %}
+                    <p class="card-text">{{ object.author }}</p>
+                {% endif %}
             </div>
         </div>
     </div>

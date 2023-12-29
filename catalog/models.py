@@ -1,5 +1,7 @@
 from django.db import models
 
+from blog.models import NULLABLE
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name='наименование')
@@ -21,6 +23,7 @@ class Product(models.Model):
     price = models.PositiveIntegerField(verbose_name='цена за штуку')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey('users.User', on_delete=models.SET_NULL, verbose_name='автор', **NULLABLE,)
 
     class Meta:
         verbose_name = 'Продукт'
