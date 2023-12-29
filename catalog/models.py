@@ -24,10 +24,11 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey('users.User', on_delete=models.SET_NULL, verbose_name='автор', **NULLABLE,)
+    publication = models.BooleanField(default=False, verbose_name='публикация')
 
     class Meta:
-        verbose_name = 'Продукт'
-        verbose_name_plural = 'Продукты'
+        verbose_name = 'продукт'
+        verbose_name_plural = 'продукты'
 
     def __str__(self):
         return f'{self.name}, {self.description}, {self.price}'

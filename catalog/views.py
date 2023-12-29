@@ -77,3 +77,5 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:index')
     login_url = 'users:login'
+
+
