@@ -3,7 +3,15 @@ from django import forms
 from users.models import User
 
 
-class UserRegisterForm(UserCreationForm):
+class StyleFormMixin:
+
+    def init(self, args, **kwargs):
+        super().init(args, **kwargs)
+        for fild_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+
+class UserRegisterForm(StyleFormMixin, UserCreationForm):
     class Meta:
         model = User
         fields = ('email', 'password1', 'password2')
