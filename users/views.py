@@ -1,5 +1,6 @@
 import random
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.urls import reverse_lazy, reverse
@@ -38,45 +39,7 @@ class RegisterView(CreateView):
             from_email=settings.EMAIL_HOST_USER,
         )
         return super().form_valid(form)
-        # self.object = form.save()
-        # self.object.email_verify = False
-        # code = ''.join([str(random.randint(0, 9)) for _ in range(12)])
-        # self.object.verify_code = code
-        # self.object.save()
-        # send_mail(
-        #     subject='Регистрация',
-        #     message=f'Для продолжения регистрации введите код: {self.object.verify_code}',
-        #     from_email=settings.EMAIL_HOST_USER,
-        #     recipient_list={self.object.email},
-        #     fail_silently=False,
-        # )
-        # return super().form_valid(form)
 
-    # def form_valid(self, form):
-    #     new_pass = ''.join([str(random.randint(0, 9)) for in range(6)])
-    #     new_user = form.save(commit=False)
-    #     new_user.code = new_pass
-    #     new_user.save()
-    #     send_mail(
-    #         recipient_list=[new_user.email],
-    #         message=f'Для подтверждения email введите код {new_user.code}',
-    #         subject='Регистрация на сервисе',
-    #         from_email=settings.DEFAULT_FROM_EMAIL,
-    #     )
-
-    # def get_success_url(self):
-    #     return reverse('users:verify')
-
-
-#
-# def verification(request, verify_code):
-#     try:
-#         user = User.objects.filter(verify_code=verify_code).first()
-#         user.is_active = True
-#         user.save()
-#         return redirect('users:success_verify')
-#     except (AttributeError, ValidationError):
-#         return redirect('users:invalid_verify')
 
 class CodeView(View):
     model = User
@@ -109,7 +72,7 @@ def generate_new_password(request):
     return redirect(reverse('catalog:index'))
 
 
-class ProfileView(UpdateView):
+class ProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:profile')
@@ -119,17 +82,17 @@ class ProfileView(UpdateView):
 
 
 def reset_password(request):
-    if request.method == 'POST':  # если форма отправлена
+    if request.method == 'POST':
         email = request.POST.get('email')  # получаем почту из формы
         user = User.objects.get(email=email)  # находим такого пользователя
-        new_password = get_random_string(12)  # тут генерируем новый пароль
+        new_password = get_random_string(12)
         send_mail(
             subject='Восстановление пароля',
             message=f'Для входа используйте новый пароль: {new_password}',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[user.email],
             fail_silently=False,
-        )  # отправлем новый пароль пользователю
+        )
         user.set_password(new_password)
         user.save()
         return redirect('users:login')

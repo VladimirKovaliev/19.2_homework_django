@@ -29,7 +29,12 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'продукт'
         verbose_name_plural = 'продукты'
-
+        permissions = [
+            (
+                'set_published',
+                'Can publish posts'
+            )
+        ]
     def __str__(self):
         return f'{self.name}, {self.description}, {self.price}'
 
