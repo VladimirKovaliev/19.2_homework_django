@@ -17,10 +17,12 @@
                         <p class="card-text">{{ object.name|title }}</p><br>
                         <a href="{% url 'catalog:view_product' object.pk %}" type="button"
                            class="btn btn-primary form-control mb-2">View</a>
+                        {% if request.user == object.author %}
                         <a href="{% url 'catalog:update_product' object.pk %}" type="button"
                            class="btn btn-primary form-control mb-2">Edit</a>
                         <a href="{% url 'catalog:delete_product' object.pk %}" type="button"
                            class="btn btn-sm btn-outline-danger">Delete</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
