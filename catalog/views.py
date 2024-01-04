@@ -7,12 +7,23 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from catalog.forms import ProductForm, VersionForm
 from catalog.models import Product, Version
+from catalog.services import get_categories
 
 
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'catalog/index.html'
     login_url = 'users/login'
+
+    def get_contex_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products = Product.objects.all()
+        categories = get_categories()
+        for product in products:
+            product.active_version = product.versions.filter(is_active=True).first()
+        context['products'] = products
+        context['categories'] = categories()
+        return context
 
 
 def contact(request):
