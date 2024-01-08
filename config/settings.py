@@ -83,10 +83,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '19.2_homework_django',
+        'NAME': os.getenv('DATABASE_NAME'),
         'USER': 'postgres',
         'HOST': '127.0.0.1',
-        'PASSWORD': '7586'
+        'PASSWORD': os.getenv('DATABASE_PASSWORD')
     }
 }
 
@@ -150,8 +150,6 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-# EMAIL_HOST_USER = 'kovaliev.v@yandex.ru'
-# EMAIL_HOST_PASSWORD = 'fwmbucispjqilbxb'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
