@@ -73,7 +73,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
             raise Http404
         return self.object
 
-
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         version_formset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
@@ -97,5 +96,3 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:index')
     login_url = 'users:login'
-
-
