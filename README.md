@@ -39,4 +39,7 @@
     python manage.py runserver
 ```
 
+![Sansanimated-1](https://github.com/VladimirKovaliev/19.2_homework_django/assets/142924160/91a91cf8-3565-4526-990d-6327ed81cfad)
+
+
 
